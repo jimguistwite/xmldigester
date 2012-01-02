@@ -1,0 +1,11 @@
+<library>
+  <book>
+    <id>44144</id>
+    <title>Title</title>
+    <author>Author</author>
+    <publicationDate>1324045046726</publicationDate>
+    <purchaseDate>2012-01-02</purchaseDate>
+    <meta key="foo" value="bar"/>
+    <meta key="foo2" value="baz"/>
+  </book>
+</library>
