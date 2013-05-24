@@ -92,7 +92,7 @@
   BOOL matchFound = false;
   for (XmlDigesterRule *rule in rules) {
     if ([rule matches:currentElementPath]) {
-      [self fireRuleStartElement:rule :elementName :attributeDict];
+      [self fireStartForRule:rule withElement:elementName andAttributes:attributeDict];
       matchFound = true;
       break;
     }
@@ -117,7 +117,7 @@
   
   for (XmlDigesterRule *rule in rules) {
     if ([rule matches:currentElementPath]) {
-      [self fireRuleEndElement:rule :eName];
+      [self fireEndForRule:rule withElement:eName];
       break;
     }
   }
@@ -129,9 +129,7 @@
 }  
 
 
-
-- (void)fireRuleStartElement:(XmlDigesterRule *)rule:(NSString*)elementName:(NSDictionary*)attributes {
-  
+- (void)fireStartForRule:(XmlDigesterRule *)rule withElement:(NSString *)elementName andAttributes:(NSDictionary *)attributes {
   if ( [rule isKindOfClass: [XmlDigesterPropertiesAssignmentRule class]] ) {
   }
   else if ( [rule isKindOfClass: [XmlDigesterCallSelectorRule class]] ) {
@@ -152,7 +150,7 @@
     id obj = [[r.objectCreationClass alloc] init];
     
     // are there any attributes that I can assign?
-    [self assignAttributes :obj :attributes];
+    [self updateObject:obj withAttributes:attributes];
     
     
     if (r.parentMethodName != nil) {
@@ -179,7 +177,7 @@
   
 }
 
-- (void)assignAttributes:(id) obj:(NSDictionary*)attributes {
+- (void)updateObject:(id) obj withAttributes:(NSDictionary*)attributes {
   Class objectClass = [obj class];
   [attributes enumerateKeysAndObjectsUsingBlock:^(id attributeName, id attributeValue, BOOL *stop) {
     if (enableLogging) {
@@ -198,7 +196,7 @@
 	}];
 }
 
-- (void)fireRuleEndElement:(XmlDigesterRule *)rule:(NSString*)elementName {
+- (void)fireEndForRule:(XmlDigesterRule *)rule withElement:(NSString *)elementName {
   if ( [rule isKindOfClass: [XmlDigesterObjectCreationRule class]] ) {
     //XmlDigesterObjectCreationRule *r = (XmlDigesterObjectCreationRule*)rule;
     if (enableLogging) {
@@ -216,7 +214,7 @@
     
     @try {
       if (r.converterName != nil) {
-        id tmp = [self runConverter:lastValue: r.converterName];
+        id tmp = [self runConverter:r.converterName forObject:lastValue];
         [obj setValue:tmp forKey:nm];
       }
       else if (r.converter != nil) {
@@ -300,7 +298,7 @@
 }
 
 
-- (id)runConverter:(id) obj: (NSString*)converter {
+- (id)runConverter:(NSString *)converter forObject:(id)obj {
   id rv = obj;
   
   if ([@"timestamp" isEqual:converter]) {

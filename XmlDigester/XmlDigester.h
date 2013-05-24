@@ -33,14 +33,14 @@
 @property BOOL enableLogging;
 
 - (void)appendRule:(XmlDigesterRule *)newRule;
-- (void)fireRuleStartElement:(XmlDigesterRule *)rule:(NSString*)elementName:(NSDictionary*)attributes;
-- (void)fireRuleEndElement:(XmlDigesterRule *)rule:(NSString*)elementName;
+- (void)fireStartForRule:(XmlDigesterRule *)rule withElement:(NSString*)elementName andAttributes:(NSDictionary*)attributes;
+- (void)fireEndForRule:(XmlDigesterRule *)rule withElement:(NSString*)elementName;
 - (void)push:(id)obj;
-- (id)runConverter:(id) obj: (NSString*)converter;
+- (id)runConverter:(NSString*)converter forObject:(id) obj;
 
 - (id)timeStampConverter:(NSString*) timestampString;
 - (id)dateConverter:(NSString*) dateString;
-- (void)assignAttributes:(id)obj :(NSDictionary *)attributes;
+- (void)updateObject:(id)obj withAttributes:(NSDictionary *)attributes;
 - (NSString*)trimPrefix:(NSString*)elementName;
 
 - (id)convertKnownValue:(NSString*)value destObject:(id)destObject elementName:(NSString*)elementName;
